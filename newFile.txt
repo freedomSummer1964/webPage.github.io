@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件夹索引</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>共享机文件夹索引</h1>
+
+    <ul id="folderList">
+        <!-- 文件夹列表将通过JavaScript动态添加 -->
+    </ul>
+
+    <script>
+        // 替换这里的路径为你的共享机文件夹路径
+        const sharedFolderPath = 'D:/python/mytry/wennieSend';
+
+        // 获取文件夹列表
+        fetch(sharedFolderPath)
+            .then(response => response.json())
+            .then(data => {
+                const folderList = document.getElementById('folderList');
+
+                // 循环添加文件夹链接
+                data.forEach(folder => {
+                    const listItem = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = sharedFolderPath + folder;
+                    link.textContent = folder;
+                    listItem.appendChild(link);
+                    folderList.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('Error fetching folder list:', error));
+    </script>
+
+</body>
+</html>
