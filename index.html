@@ -3,66 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文件夹索引</title>
+    <title>GitHub 文件列表</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        ul {
-            list-style-type: none;
+            margin: 0;
             padding: 0;
+            background-color: #f4f4f4;
         }
 
-        li {
-            margin-bottom: 10px;
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
         }
 
-        a {
-            text-decoration: none;
-            color: #007bff;
+        #container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center; /* Center align the content */
         }
 
-        a:hover {
-            text-decoration: underline;
+        #fileList {
+            text-align: left;
         }
     </style>
 </head>
 <body>
 
-    <h1>共享机文件夹索引</h1>
+<header>
+    <h1>GitHub 文件列表</h1>
+</header>
 
-    <ul id="folderList">
-        <!-- 文件夹列表将通过JavaScript动态添加 -->
-    </ul>
+<div id="container">
+    <h2>文件列表</h2>
+    <ul id="fileList"></ul>
+</div>
 
-    <script>
-        // 替换这里的路径为你的共享机文件夹路径
-        const sharedFolderPath = '/files/';
+<script>
+    // Replace 'USERNAME', 'REPO', and 'PATH' with your GitHub username, repository name, and folder path
+    const username = 'freedomSummer1964';
+    const repo = 'webPage.github.io';
+    const path = 'files'; // Path to the folder in your repository
 
-        // 获取文件夹列表
-        fetch(sharedFolderPath)
-            .then(response => response.json())
-            .then(data => {
-                const folderList = document.getElementById('folderList');
+    async function getFileList() {
+        try {
+            const response = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${path}`);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching file list:', error);
+            return [];
+        }
+    }
 
-                // 循环添加文件夹链接
-                data.forEach(folder => {
-                    const listItem = document.createElement('li');
-                    const link = document.createElement('a');
-                    link.href = sharedFolderPath + folder;
-                    link.textContent = folder;
-                    listItem.appendChild(link);
-                    folderList.appendChild(listItem);
-                });
-            })
-            .catch(error => console.error('Error fetching folder list:', error));
-    </script>
+    async function populateFileList() {
+        const fileList = await getFileList();
+        const fileListContainer = document.getElementById('fileList');
+
+        // Remove existing file list
+        fileListContainer.innerHTML = '';
+
+        // Populate file list
+        fileList.forEach((file) => {
+            if (file.type === 'file') {
+                const li = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = file.html_url;
+                link.textContent = file.name;
+                li.appendChild(link);
+                fileListContainer.appendChild(li);
+            }
+        });
+    }
+
+    // Call the function when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        populateFileList();
+    });
+</script>
 
 </body>
 </html>
